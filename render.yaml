@@ -1,4 +1,7 @@
-# Render Blueprint: Postgres + Key Value (Redis) + 2 API nodes + load balancer (serves the frontend)
+# Render Blueprint: Postgres + 2 API nodes + load balancer (serves the frontend)
+# This version creates a new database but REUSES your existing Redis (Key Value) instance,
+# because the free plan allows only one Key Value per workspace.
+
 databases:
   - name: leaderboard-db
     plan: free
@@ -6,11 +9,6 @@ databases:
     user: leaderboard
 
 services:
-  - type: keyvalue
-    name: leaderboard-redis
-    plan: free
-    ipAllowList: []          # internal connections only
-
   - type: web
     name: leaderboard-api-1
     runtime: docker
@@ -30,7 +28,7 @@ services:
       - key: DB_PASSWORD
         fromDatabase: { name: leaderboard-db, property: password }
       - key: REDIS_URL
-        fromService: { type: keyvalue, name: leaderboard-redis, property: connectionString }
+        sync: false          # paste the Internal URL of your existing yt-redis here
       - key: INGEST_MODE
         value: hybrid
 
@@ -53,7 +51,7 @@ services:
       - key: DB_PASSWORD
         fromDatabase: { name: leaderboard-db, property: password }
       - key: REDIS_URL
-        fromService: { type: keyvalue, name: leaderboard-redis, property: connectionString }
+        sync: false          # same Internal URL as api-1
       - key: INGEST_MODE
         value: hybrid
 
