@@ -1,0 +1,6 @@
+target/
+*.class
+.idea/
+.vscode/
+__pycache__/
+lb/src/main/resources/static/

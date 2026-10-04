@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChessRank - Chess Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1 class="brand">ChessRank - Chess Leaderboard</h1>
+    <nav class="tabs" role="tablist" aria-label="Game mode">
+      <button class="tab active" role="tab" data-mode="blitz">Blitz</button>
+      <button class="tab" role="tab" data-mode="bullet">Bullet</button>
+      <button class="tab" role="tab" data-mode="rapid">Rapid</button>
+    </nav>
+    <div class="pulse connecting" id="pulse" role="status" aria-live="polite">
+      <span class="dot"></span><span id="pulse-text">Connecting</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="podium" id="podium" aria-label="Top three players">
+      <article class="pod p2" data-i="1"><span class="medal">2</span><h2 class="pname">-</h2><p class="prate"></p></article>
+      <article class="pod p1" data-i="0"><span class="medal">1</span><h2 class="pname">-</h2><p class="prate"></p></article>
+      <article class="pod p3" data-i="2"><span class="medal">3</span><h2 class="pname">-</h2><p class="prate"></p></article>
+    </section>
+
+    <section class="board">
+      <div class="board-head">
+        <h2 id="board-title">Blitz ranking</h2>
+        <form id="find-form" autocomplete="off">
+          <input id="find-input" type="search" placeholder="Find a player" aria-label="Find a player">
+          <button type="submit">Find my rank</button>
+        </form>
+      </div>
+
+      <div class="find" id="find" hidden>
+        <div class="find-title" id="find-title"></div>
+        <div id="find-list"></div>
+      </div>
+
+      <div class="cols"><span>Rank</span><span>Player</span><span>Rating</span></div>
+      <div class="rows" id="rows">
+        <p class="empty" id="empty">Waiting for the first scores. On a free server the API can take a minute to wake up.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Served by <span id="instance">-</span> through the load balancer</footer>
+  <div class="toast" id="toast" role="status"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <script src="app.js"></script>
+</body>
+</html>

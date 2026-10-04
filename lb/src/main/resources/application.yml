@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:8080}
+lb:
+  # comma-separated list of API base URLs, e.g. https://api-1.onrender.com,https://api-2.onrender.com
+  backends: ${BACKENDS:http://localhost:8081,http://localhost:8082}
+  # round-robin | least-connections
+  strategy: ${LB_STRATEGY:least-connections}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

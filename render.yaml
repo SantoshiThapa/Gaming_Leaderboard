@@ -1,0 +1,71 @@
+# Render Blueprint: Postgres + Key Value (Redis) + 2 API nodes + load balancer (serves the frontend)
+databases:
+  - name: leaderboard-db
+    plan: free
+    databaseName: leaderboard
+    user: leaderboard
+
+services:
+  - type: keyvalue
+    name: leaderboard-redis
+    plan: free
+    ipAllowList: []          # internal connections only
+
+  - type: web
+    name: leaderboard-api-1
+    runtime: docker
+    plan: free
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase: { name: leaderboard-db, property: host }
+      - key: DB_PORT
+        fromDatabase: { name: leaderboard-db, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: leaderboard-db, property: database }
+      - key: DB_USER
+        fromDatabase: { name: leaderboard-db, property: user }
+      - key: DB_PASSWORD
+        fromDatabase: { name: leaderboard-db, property: password }
+      - key: REDIS_URL
+        fromService: { type: keyvalue, name: leaderboard-redis, property: connectionString }
+      - key: INGEST_MODE
+        value: hybrid
+
+  - type: web
+    name: leaderboard-api-2
+    runtime: docker
+    plan: free
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase: { name: leaderboard-db, property: host }
+      - key: DB_PORT
+        fromDatabase: { name: leaderboard-db, property: port }
+      - key: DB_NAME
+        fromDatabase: { name: leaderboard-db, property: database }
+      - key: DB_USER
+        fromDatabase: { name: leaderboard-db, property: user }
+      - key: DB_PASSWORD
+        fromDatabase: { name: leaderboard-db, property: password }
+      - key: REDIS_URL
+        fromService: { type: keyvalue, name: leaderboard-redis, property: connectionString }
+      - key: INGEST_MODE
+        value: hybrid
+
+  - type: web
+    name: leaderboard-lb
+    runtime: docker
+    plan: free
+    dockerfilePath: ./lb/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: BACKENDS
+        sync: false          # set after first deploy: https://<api-1>.onrender.com,https://<api-2>.onrender.com
+      - key: LB_STRATEGY
+        value: least-connections

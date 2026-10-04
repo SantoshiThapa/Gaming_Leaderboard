@@ -1,0 +1,29 @@
+server:
+  port: ${PORT:8080}
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:leaderboard}
+    username: ${DB_USER:leaderboard}
+    password: ${DB_PASSWORD:leaderboard}
+    hikari:
+      maximum-pool-size: ${DB_POOL:10}
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+  flyway:
+    enabled: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+app:
+  instance-id: ${INSTANCE_NAME:${RENDER_SERVICE_NAME:${HOSTNAME:local}}}
+  ingest:
+    # hybrid = Lichess seed + live simulator | lichess = Lichess only | simulator = generated players only
+    mode: ${INGEST_MODE:hybrid}
+    lichess-refresh-ms: ${LICHESS_REFRESH_MS:600000}
+    sim-interval-ms: ${SIM_INTERVAL_MS:800}
